@@ -1,0 +1,68 @@
+-- Top 5 Products by Revenue
+
+Write a query to list the top 5 products by total sales revenue. Return the product name (in UPPER case), its category name, and total revenue (sum of quantity×unit_price). Sort by revenue descending.
+
+Expected Output: Columns PRODUCT_NAME, CATEGORY_NAME, TOTAL_REVENUE. One row per product, ordered by highest revenue.
+
+Hint: Join products → categories and order_items (and orders if needed). Use SUM(quantity * unit_price) with GROUP BY product. Apply ORDER BY on the sum and LIMIT 5. Use a string function (e.g. UPPER()) on product name.
+
+
+
+-- High-Value Customers 
+
+Find all customers who have placed more than 3 orders and whose total spending exceeds $2000. Show customer_id, full name (first + last), number of orders, and total spent. Sort by total spent descending.
+
+Expected Output: Columns CUSTOMER_ID, FULL_NAME, ORDER_COUNT, TOTAL_SPENT. Only customers meeting both conditions.
+
+Hint: Join customers → orders. Group by customer, use COUNT(*) and SUM(total_amount). Use HAVING to filter (ORDER_COUNT > 3 AND TOTAL_SPENT > 2000). Concatenate names (e.g. first_name || ' ' || last_name).
+
+
+
+-- Monthly Sales Trend (2025)
+
+Compute the monthly revenue for the year 2025. For each month (Jan–Dec 2025), show Month (e.g. 2025-01), total revenue (sum of order total_amount), and number of orders. Only include orders with status 'Delivered' or 'Shipped'. Order results by month ascending.
+
+Expected Output: Columns YEAR_MONTH, TOTAL_REVENUE, ORDER_COUNT. One row per month of 2025 (use YYYY-MM format).
+
+Hint: Use a date function to extract year and month (e.g. TO_VARCHAR(order_date, 'YYYY-MM') or YEAR(order_date), MONTH(order_date)). Filter WHERE status IN ('Delivered','Shipped') AND YEAR(order_date)=2025. Group by year/month and use SUM(total_amount) and COUNT(*). Use ORDER BY YEAR_MONTH.
+
+
+
+-- Employee Sales with Managers 
+
+List each employee who has handled orders in 2025, along with their manager’s name and the number of orders they handled. Show EmployeeID, EmployeeName, ManagerName, Department, and OrderCount. Sort by OrderCount descending.
+
+Expected Output: Columns EMPLOYEEID, EMPLOYEENAME, MANAGERNAME, DEPARTMENT, ORDERCOUNT. Only include employees with ≥1 order in 2025.
+
+Hint: Join employees to employees (self-join) to get manager name (e.manager_id = m.employee_id). Then join e to orders (filtering orders in 2025 by YEAR(order_date)). Group by employee details and count orders. Use ORDER BY COUNT DESC.
+
+
+
+-- Product Price Categories
+
+Using a CASE statement, categorize each product as 'Budget' if price < 50, 'Midrange' if price BETWEEN 50 and 200, and 'Premium' if price > 200. Then count how many products fall into each category. Show PriceCategory and ProductCount.
+
+Expected Output: Two columns: PriceCategory (Budget, Midrange, Premium) and ProductCount (integer). There should be up to 3 rows (if a category has no products, it may be absent or 0).
+
+Hint: Use CASE WHEN price < 50 THEN 'Budget' WHEN price <= 200 THEN 'Midrange' ELSE 'Premium' END AS PriceCategory. Group by this case expression and COUNT(*).
+
+
+
+-- Recent Customers Without Orders-- : 
+
+Find customers who signed up in the last 180 days and never placed an order. Show their customer_id, name, signup_date, and days_since_signup. Order by days_since_signup descending.
+
+Expected Output: Columns CUSTOMER_ID, NAME, SIGNUP_DATE, DAYS_SINCE_SIGNUP. Only customers with no orders.
+
+Hint: Compare signup_date to current date (use DATEDIFF('day', signup_date, CURRENT_DATE()) <= 180). Use a LEFT JOIN from customers to orders and filter WHERE orders.order_id IS NULL. Calculate days_since_signup using a date function (e.g. DATEDIFF).
+
+
+
+-- Product Sales 
+
+For each product, find the total quantity sold (sum of quantity from order_items). Include products that have never been sold (quantity = 0). Return ProductID, ProductName, and TotalSold. Sort by TotalSold descending.
+
+Expected Output: Columns PRODUCT_ID, PRODUCT_NAME, TOTAL_SOLD. All products appear, even if TotalSold is 0.
+
+Hint: Use a RIGHT JOIN: start from order_items RIGHT JOIN products. Group by product to get SUM(quantity). Use COALESCE to convert NULL sums to 0 for unsold products.
+
