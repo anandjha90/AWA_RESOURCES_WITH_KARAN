@@ -25,6 +25,8 @@ CREATE OR REPLACE TABLE blinkit_order_items (
     
 );
 
+
+
 CREATE OR REPLACE TABLE blinkit_orders (
     
     order_id                 NUMBER(12,0),
@@ -59,3 +61,22 @@ CREATE OR REPLACE TABLE blinkit_delivery_performance (
     
     CONSTRAINT pk_delivery PRIMARY KEY (order_id)
 );
+
+CREATE OR REPLACE STAGE blinkit_stage;
+
+COPY INTO blinkit_orders
+FROM @blinkit_stage/blinkit_orders.csv
+FILE_FORMAT = blinkit_csv_file_format
+ON_ERROR = 'CONTINUE';
+
+CREATE OR REPLACE FILE FORMAT blinkit_csv_file_format
+TYPE = 'CSV'
+FIELD_DELIMITER = ','
+SKIP_HEADER = 1
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+TRIM_SPACE = TRUE
+EMPTY_FIELD_AS_NULL = TRUE
+NULL_IF = ('NULL', 'null', '')
+DATE_FORMAT = 'DD-MM-YYYY'
+TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS'
+ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE;
